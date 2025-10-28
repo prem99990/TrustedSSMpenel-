@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrustedSmmPanel - Order Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      color: #333;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      width: 90%;
+      max-width: 400px;
+      background: #fff;
+      margin: 40px auto;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    h2 { color: #0077ff; }
+    input, select, textarea, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #0077ff;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #005ecc;
+    }
+    .success {
+      color: green;
+      margin-top: 10px;
+    }
+    .error {
+      color: red;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>💎 TrustedSmmPanel Order</h2>
+
+    <form id="orderForm">
+      <input type="text" name="name" placeholder="Full Name" required>
+      <select name="service" required>
+        <option value="">-- Select Service --</option>
+        <option value="Instagram Followers">Instagram Followers (₹1 / 1000)</option>
+        <option value="Instagram Likes">Instagram Likes (₹0.50 / 1000)</option>
+        <option value="Instagram Views">Instagram Views (₹0.10 / 1000)</option>
+      </select>
+      <input type="text" name="username" placeholder="Instagram Username / Link" required>
+      <input type="number" name="quantity" placeholder="Quantity" required>
+      <textarea name="notes" placeholder="Any Notes (optional)"></textarea>
+      <input type="text" name="payment" placeholder="Payment UPI: 8409218325@fam" required>
+      <button type="submit">Submit Order</button>
+    </form>
+
+    <div id="response"></div>
+  </div>
+
+  <script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbx288Xti-OB8xmh4umencdxzjWjcbhTLcB4V0RRrwNd40Q4uRoKFKMqo_oDhx4lvloUrg/exec";
+    const form = document.getElementById('orderForm');
+    const responseDiv = document.getElementById('response');
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      responseDiv.innerHTML = "⏳ Placing your order...";
+
+      fetch(scriptURL, {
+        method: 'POST',
+        body: JSON.stringify(data)
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.result === "success") {
+          responseDiv.innerHTML = `<p class="success">✅ Order placed successfully!<br>Tracking ID: <b>${res.tracking_id}</b></p>`;
+          form.reset();
+        } else {
+          responseDiv.innerHTML = `<p class="error">❌ Error: ${res.message}</p>`;
+        }
+      })
+      .catch(err => {
+        responseDiv.innerHTML = `<p class="error">⚠️ Something went wrong. Try again later.</p>`;
+        console.error(err);
+      });
+    });
+  </script>
+</body>
+</html>
